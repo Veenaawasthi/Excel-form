@@ -43,7 +43,6 @@
 
   .form-group select {
     appearance: none;
-    background-image: url("data:image/svg+xml;base64,phN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2IiBoZWlmZW50PSIxMCI+PHBhdGggZD0iTCAwIDUgMiAzLjUgNSA3IDAgNSA4LjUgMi41IDcgNSAxdjAtNHoiIGZpbGw9IiNjY2NjY2YiIgLz48L3N2Zz4="); /* Replace with down arrow icon if desired */
     background-repeat: no-repeat;
     background-position: right 10px center;
     padding-right: 30px;
