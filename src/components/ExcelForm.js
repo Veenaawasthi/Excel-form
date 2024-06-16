@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import "./ExcelForm.css";
-import * as XLSX from 'xlsx';
+
 
 const ExcelForm = () => {
   const [formData, setFormData] = useState({
-    pax: "",
     company: "",
     name: "",
     city: "",
@@ -19,23 +18,71 @@ const ExcelForm = () => {
     agentHandling: "",
   });
 
+  const generateTravelString = (adult, fullName, travelDate) => {
+    const initials = fullName
+      .split(" ")
+      .map((name) => name.charAt(0))
+      .join("")
+      .toUpperCase();
+    const date = new Date(travelDate);
+    const day = String(date.getDate()).padStart(2, "0");
+    const monthNames = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    const month = monthNames[date.getMonth()];
+    const year = String(date.getFullYear()).slice(-2);
+    setFormData({
+      ...formData,
+      uid: `${String(adult).padStart(2, "0")}_${initials}${day}${month}${year}`,
+    });
+  };
+
+
   const handleChange = (event) => {
     setFormData({ ...formData, [event.target.name]: event.target.value });
   };
 
   const handleSubmit = (event) => {
+    generateTravelString(formData.adult, formData.name, formData.tourStartDate);
     event.preventDefault();
-    exportToExcel(formData);
-    console.log("Form submitted:", formData);
+    if(formData.uid.length){
+      console.log("Form submitted:", formData);
+      setFormData({
+        adult: "",
+        child: "",
+        infant: "",
+        company: "",
+        name: "",
+        city: "",
+        address: "",
+        mobile: "",
+        email: "",
+        status: "",
+        duration: "",
+        queryDate: "",
+        tourStartDate: "",
+        uid: "",
+        agentHandling: "",
+      });
+    }
   };
 
-  const exportToExcel=(formData)=>{
-    const worksheet = XLSX.utils.json_to_sheet([formData]);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
-    XLSX.writeFile(workbook, 'SampleData.xlsx');
+  const handleReset = () => {
     setFormData({
-      pax: "",
+      adult: "",
+      child: "",
+      infant: "",
       company: "",
       name: "",
       city: "",
@@ -49,21 +96,46 @@ const ExcelForm = () => {
       uid: "",
       agentHandling: "",
     });
-  }
-
+  };
+ 
+ 
   return (
     <form className="form" onSubmit={handleSubmit}>
-      <h1>Form Component</h1>
+      <h1 className="form-h1"> * Rising Destination *</h1>
       <div className="form-group">
         <label htmlFor="pax">Pax:</label>
-        <input
-          type="text"
-          id="pax"
-          name="pax"
-          value={formData.pax}
-          onChange={handleChange}
-          required
-        />
+        <div className="div-pax">
+          <label htmlFor="adult">Adult(12+):</label>
+          <input
+            type="number"
+            id="adult"
+            name="adult"
+            min="0"
+            value={formData.adult}
+            onChange={handleChange}
+            required
+          />
+          <label htmlFor="adult">Child(2-12):</label>
+          <input
+            type="number"
+            id="child"
+            name="child"
+            min="0"
+            value={formData.child}
+            onChange={handleChange}
+            required
+          />
+          <label htmlFor="adult">Infant(less than 2):</label>
+          <input
+            type="number"
+            id="infant"
+            name="infant"
+            value={formData.infant}
+            onChange={handleChange}
+            min="0"
+            required
+          />
+        </div>
       </div>
       <div className="form-group">
         <label htmlFor="company">Company:</label>
@@ -135,8 +207,11 @@ const ExcelForm = () => {
           onChange={handleChange}
         >
           <option value="">Select Status</option>
-          <option value="open">Open</option>
-          <option value="closed">Closed</option>
+          <option value="Replied">Replied</option>
+          <option value="Open">Open</option>
+          <option value="Confirmed">Confirmed</option>
+          <option value="Lost">Lost</option>
+          <option value="NA(Reason for NA)">NA(Reason for NA)</option>
         </select>
       </div>
       <div className="form-group">
@@ -145,6 +220,7 @@ const ExcelForm = () => {
           type="number"
           id="duration"
           name="duration"
+          min="0"
           value={formData.duration}
           onChange={handleChange}
         />
@@ -175,6 +251,7 @@ const ExcelForm = () => {
           type="text"
           id="uid"
           name="uid"
+          disabled
           value={formData.uid}
           onChange={handleChange}
         />
@@ -193,7 +270,7 @@ const ExcelForm = () => {
         <button type="submit" className="submit">
           Submit
         </button>
-        <button type="reset" className="reset">
+        <button type="reset" onClick={handleReset} className="reset">
           Reset
         </button>
       </div>

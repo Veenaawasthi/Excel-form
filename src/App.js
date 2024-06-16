@@ -4,7 +4,7 @@ import ExcelForm from './components/ExcelForm';
 
 function App() {
   return (
-   <ExcelForm/>
+    <div className="app" ><ExcelForm/></div>
   );
 }
 
